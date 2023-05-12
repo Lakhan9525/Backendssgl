@@ -3,8 +3,21 @@ const router = express.Router();
 const User = require("../Modals/UserModal");
 
 // Create a new user info
+// router.post('/', async (req, res) => {
+//   try {
+//     const userInfo = new User(req.body);
+//     await userInfo.save();
+//     res.status(201).send(userInfo);
+//   } catch (error) {
+//     res.status(400).send(error);
+//   }
+// });
 router.post('/', async (req, res) => {
   try {
+    const existingUser = await User.findOne({ mobile: req.body.mobile });
+    if (existingUser) {
+      return res.status(409).send({ error: 'Mobile number already exists' });
+    }
     const userInfo = new User(req.body);
     await userInfo.save();
     res.status(201).send(userInfo);
@@ -12,6 +25,7 @@ router.post('/', async (req, res) => {
     res.status(400).send(error);
   }
 });
+
 
 // Get all user infos
 // router.get('/', async (req, res) => {
